@@ -1,62 +1,56 @@
-import Head from "next/head";
-import { CardanoWallet, MeshBadge } from "@meshsdk/react";
+import { CardanoWallet, useWallet, WalletContext } from "@meshsdk/react";
+import React, {useState} from "react";
+import { AppWallet } from "@meshsdk/core";
+import { createTransaction } from "../backend";
 
-export default function Home() {
+
+
+
+const Home = function() {
+
+  const [loading , setLoading] = useState<boolean>(false);
+  const { wallet, connected, name, connecting, connect, disconnect, error } = useWallet();
+
+
+  const test = async function() {
+    setLoading(true);
+    try {
+        console.log("test is ok");
+        const changeAddress = await wallet.getChangeAddress();
+        console.log("changeAddress ",changeAddress)
+        const utxos = await wallet.getUtxos();
+        console.log("utxo ", utxos);
+        const mnemonic = AppWallet.brew();
+        console.log(
+          "mnemonic", mnemonic
+        )
+          console.log("start");
+        const { unsignedTx } = await createTransaction(changeAddress, utxos);
+        console.log("unsignedTx ", unsignedTx);
+        const signedTx = await wallet.signTx(unsignedTx, true);
+        const txHash = await wallet.submitTx(signedTx);
+        console.log("txHash", txHash);
+        
+        console.log("finish")
+    } catch(error) {
+
+    }
+
+    setLoading(false)
+  }
   return (
-    <div className="container">
-      <Head>
-        <title>Mesh App on Cardano</title>
-        <meta name="description" content="A Cardano dApp powered my Mesh" />
-        <link
-          rel="icon"
-          href="https://meshjs.dev/favicon/favicon-32x32.png"
-        />
-        <link
-          href="https://meshjs.dev/css/template.css"
-          rel="stylesheet"
-          key="mesh-demo"
-        />
-      </Head>
+    <>
+      <input type= "file" style={{
+        padding: 10
+      }}/>
+      
+      <CardanoWallet/>
 
-      <main className="main">
-        <h1 className="title">
-          <a href="https://meshjs.dev/">Mesh</a> Next.js
-        </h1>
-
-        <div className="demo">
-          <CardanoWallet />
-        </div>
-
-        <div className="grid">
-          <a href="https://meshjs.dev/apis" className="card">
-            <h2>Documentation</h2>
-            <p>
-              Our documentation provide live demos and code samples; great
-              educational tool for learning how Cardano works.
-            </p>
-          </a>
-
-          <a href="https://meshjs.dev/guides" className="card">
-            <h2>Guides</h2>
-            <p>
-              Whether you are launching a new NFT project or ecommerce store,
-              these guides will help you get started.
-            </p>
-          </a>
-
-          <a href="https://meshjs.dev/react" className="card">
-            <h2>React components</h2>
-            <p>
-              Useful React UI components and hooks, seamlessly integrate them
-              into your app, and bring the user interface to life.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className="footer">
-        <MeshBadge dark={true} />
-      </footer>
-    </div>
-  );
+      {loading ? "loadding...": <button style={{
+        padding: 10
+      }}onClick={() => test()}>Test</button>}
+    </>
+  )
 }
+
+export default Home;

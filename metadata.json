@@ -1,0 +1,26 @@
+{
+    "721": {
+        "insert_policy_id": {
+            "myNft": {
+                "image": "insert_ipfs_hash",
+                "mediaType": "image/png",
+                "name": "myNft",
+
+                "haircolor": "brown",
+                "power": "100",
+                "anotherAttribute": [
+
+                ],
+
+                "files": [
+                    {
+                        "image": "insert_ipfs_hash",
+                        "mediaType": "image/png",
+                        "name":"myNft"
+                    }
+                ]
+            }
+        }
+    }
+
+}
